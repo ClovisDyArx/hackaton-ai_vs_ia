@@ -18,6 +18,8 @@ def get_dataframe():
     # Concatenate subsets
     df = pd.DataFrame()
     for file in ['finance', 'open_qa', 'medicine', 'wiki_csai']:
-        df = pd.concat([df, pd.read_json("data/HC3/" + file + ".jsonl", lines=True)])
+        subset = pd.read_json("data/HC3/" + file + ".jsonl", lines=True)
+        df = pd.concat([df, subset])
 
+    df.reset_index(drop=True)
     return df
