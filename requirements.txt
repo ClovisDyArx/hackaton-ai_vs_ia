@@ -1,4 +1,5 @@
 tiktoken
 spacy
+dash
+
 optuna
-optuna-dashboard
