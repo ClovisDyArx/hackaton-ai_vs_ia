@@ -3,3 +3,5 @@ spacy
 dash
 wordcloud
 optuna
+transformers
+pandas
