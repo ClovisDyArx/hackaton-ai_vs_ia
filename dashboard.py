@@ -3,18 +3,19 @@ import numpy as np
 from dash import Dash, html, dcc, callback, Output, Input, dash_table
 import plotly.graph_objs as go
 import plotly.express as px
-from utils import get_new_dataframe
+from utils import get_new_dataframe, get_dataframe
 from wordcloud import WordCloud
 import base64
 import io
-
-df = get_new_dataframe()
 
 # Initialize the Dash app
 ext = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = Dash(__name__,  title="MINARM", suppress_callback_exceptions=True, external_stylesheets=ext)
 server = app.server
 
+#### NEW DATAFRAME ####
+
+df = get_new_dataframe()
 
 tmp_df = pd.DataFrame()
 tmp_df['label'] = df['label'].copy()
@@ -80,6 +81,11 @@ word_cloud_ia = html.Div(children=[
     html.Img(src=f'data:image/png;base64,{wordcloud_ia_base64}', title='Nuage de mots les plus répandus (IAs)')
 ])
 
+#### OLD DATAFRAME ####
+
+# old_df = get_dataframe()
+
+#### LAYOUT ####
 
 app.layout = html.Div([
     # Div Titre
