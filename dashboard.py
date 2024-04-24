@@ -13,52 +13,91 @@ ext = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = Dash(__name__,  title="MINARM", suppress_callback_exceptions=True, external_stylesheets=ext)
 server = app.server
 
-# Define the layout of the dashboard
-app.layout = html.Div(children=[
-    html.H1(children='Text Analysis Dashboard'),
-    
-    # Distribution of Labels
+
+tmp_df = pd.DataFrame()
+tmp_df['label'] = df['label'].copy()
+tmp_df["label"] = tmp_df["label"].apply(lambda x: "humain" if x == 1 else "IA")
+pie_graph = html.Div(children=[
     dcc.Graph(
         id='label-distribution',
-        figure=px.pie(df, names='label', title='Label Distribution')
+        figure=px.pie(tmp_df, names='label', labels={1: 'humains', 0: 'IAs'}, title='Distribution des Labels (humains vs ia)')
     ),
-    
-    # Text Length Distribution
-    dcc.Graph(
-        id='text-length-distribution',
-        figure=px.histogram(df, x=df['text'].apply(len), title='Text Length Distribution')
-    ),
-    
-    # src Distribution
-    dcc.Graph(
-        id='src-distribution',
-        figure=px.bar(df['src'].value_counts(), title='src Distribution')
-    ),
-    
-    # Label Distribution by src
-    dcc.Graph(
-        id='label-by-src',
-        figure=px.histogram(df, x='src', color='label', barmode='stack', title='Label Distribution by src')
-    ),
-    
-    # Word Clouds (needs external library such as wordcloud)
-    # You need to install the library first: pip install wordcloud
-    # Here's a placeholder
-    # html.Img(src=wordcloud_image),
-    
-    # Top N-grams (needs implementation)
-    
-    # Time Series Analysis (if applicable, needs implementation)
-    
-    # Correlation Analysis (needs implementation)
 ])
 
-# Run the Dash app
+histogram_figure = px.histogram(df, x=df['text'].apply(len), title='Distribution de la longueur des textes')
+histogram_figure.update_xaxes(range=[0, 7000])
+text_len_graph = html.Div(children=[
+    dcc.Graph(
+        id='text-length-distribution',
+        figure=histogram_figure
+    ),
+])
+
+n = 20
+top_sources = df['src'].value_counts().nlargest(n)
+title = f"Les {n} sources les plus fréquentes"
+bar_chart_figure = px.bar(top_sources, title=title)
+src_distr_graph = html.Div(children=[
+    dcc.Graph(
+        id='src-distribution',
+        figure=bar_chart_figure
+    ),
+])
+
+tmp_df = pd.DataFrame()
+tmp_df["source"] = df["src"].unique().copy()
+tmp_df["source"] = tmp_df["source"].apply(lambda x: "humain" if "human" in x else "IA")
+pie_proportion_graph = html.Div(children=[
+    dcc.Graph(
+        id='source-proportion',
+        figure=px.pie(tmp_df, names='source', title='Proportion de texte (Humain vs IA)')
+    ),
+])
+
+
+
+
+app.layout = html.Div([
+    # Div Titre
+    html.Div(children=[  # TODO
+        html.H1(children='IA vs AI : Tableau de bord de visualisation des données'),
+    ], style={'display': 'flex', 'flexDirection': 'row', 'justifyContent': 'center'}),
+
+    # Div Haute
+    html.Div(children=[
+        html.Div(children=[
+            pie_graph
+        ], style={'padding': 10, 'flex': 1}),
+
+        html.Div(children=[
+            text_len_graph
+        ], style={'padding': 10, 'flex': 1}),
+
+        html.Div(children=[
+            src_distr_graph
+        ], style={'padding': 10, 'flex': 1}),
+
+    ], style={'display': 'flex', 'flexDirection': 'row', 'padding': '5% 0'}),
+
+    # Div Milieu
+    html.Div(children=[
+        html.Div(children=[
+            pie_proportion_graph
+        ], style={'padding': 10, 'flex': 1}),
+
+    ], style={'display': 'flex', 'flexDirection': 'row', 'padding': '5% 0'}),
+
+    # Div Basse
+    html.Div(children=[
+        "TODO"
+
+    ], style={'display': 'flex', 'flexDirection': 'row', 'padding': '5% 0'}),
+])
 
 PORT = 5000
 ADDRESS = "0.0.0.0"
 if __name__ == '__main__':
-    app.run_server(debug=True, port=PORT, host=ADDRESS)
+    app.run_server(debug=False, port=PORT, host=ADDRESS)
 
 
 """
