@@ -4,7 +4,9 @@ from dash import Dash, html, dcc, callback, Output, Input, dash_table
 import plotly.graph_objs as go
 import plotly.express as px
 from utils import get_new_dataframe
-
+from wordcloud import WordCloud
+import base64
+import io
 
 df = get_new_dataframe()
 
@@ -50,11 +52,33 @@ tmp_df["source"] = tmp_df["source"].apply(lambda x: "humain" if "human" in x els
 pie_proportion_graph = html.Div(children=[
     dcc.Graph(
         id='source-proportion',
-        figure=px.pie(tmp_df, names='source', title='Proportion de texte (Humain vs IA)')
+        figure=px.pie(tmp_df, names='source', title='Proportion des sources (Humain vs IA)')
     ),
 ])
 
+tmp_df = pd.DataFrame()
+text_human = ' '.join(df[df["label"] == 1]["text"])
+wordcloud_human = WordCloud(width=600, height=400, background_color='white').generate(text_human)
 
+wordcloud_img = io.BytesIO()
+wordcloud_human.to_image().save(wordcloud_img, format='PNG')
+wordcloud_human_base64 = base64.b64encode(wordcloud_img.getvalue()).decode('utf-8')
+
+word_cloud_human = html.Div(children=[
+    html.Img(src=f'data:image/png;base64,{wordcloud_human_base64}', title='Nuage de mots les plus répandus (humains)')
+])
+
+tmp_df = pd.DataFrame()
+text_ia = ' '.join(df[df["label"] == 0]["text"])
+wordcloud_ia = WordCloud(width=600, height=400, background_color='white').generate(text_ia)
+
+wordcloud_img = io.BytesIO()
+wordcloud_ia.to_image().save(wordcloud_img, format='PNG')
+wordcloud_ia_base64 = base64.b64encode(wordcloud_img.getvalue()).decode('utf-8')
+
+word_cloud_ia = html.Div(children=[
+    html.Img(src=f'data:image/png;base64,{wordcloud_ia_base64}', title='Nuage de mots les plus répandus (IAs)')
+])
 
 
 app.layout = html.Div([
@@ -85,11 +109,13 @@ app.layout = html.Div([
             pie_proportion_graph
         ], style={'padding': 10, 'flex': 1}),
 
-    ], style={'display': 'flex', 'flexDirection': 'row', 'padding': '5% 0'}),
+        html.Div(children=[
+            word_cloud_human
+        ], style={'padding': 10, 'flex': 1}),
 
-    # Div Basse
-    html.Div(children=[
-        "TODO"
+        html.Div(children=[
+            word_cloud_ia
+        ], style={'padding': 10, 'flex': 1}),
 
     ], style={'display': 'flex', 'flexDirection': 'row', 'padding': '5% 0'}),
 ])
@@ -98,117 +124,3 @@ PORT = 5000
 ADDRESS = "0.0.0.0"
 if __name__ == '__main__':
     app.run_server(debug=False, port=PORT, host=ADDRESS)
-
-
-"""
-ext = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-app = Dash(__name__,  title="Bourse", suppress_callback_exceptions=True, external_stylesheets=ext)
-server = app.server
-
-graph_selector = html.Div(children=[
-    dcc.Dropdown(
-        id='visualization-type',
-        options=[
-            {'label': 'Lines', 'value': 'lines'},
-            {'label': 'Candlesticks', 'value': 'candlesticks'}
-        ],
-        value='lines'  # valeur par défaut
-    )
-])
-
-whole_selector = html.Div(children=[
-    # Div Milieu
-    html.Div(children=[
-        html.Label('Select visualization type:'),
-        graph_selector,
-    ], style={'flex': 1, 'padding': '0 10%'}),
-
-], style={'display': 'flex', 'flexDirection': 'row'})
-
-stock_info_table = dash_table.DataTable(
-    id='stock-table',
-    columns=[
-        {'name': 'Date', 'id': 'date-column'},
-        {'name': 'Min', 'id': 'min-column'},
-        {'name': 'Max', 'id': 'max-column'},
-        {'name': 'Start', 'id': 'start-column'},
-        {'name': 'End', 'id': 'end-column'},
-        {'name': 'Mean', 'id': 'mean-column'},
-        {'name': 'Std Dev', 'id': 'std-dev-column'}
-    ],
-    page_size=10,
-    data=[]
-)
-
-# * -={#|#}=- * -={#|#}=- * -={#|#}=- * APP LAYOUT * -={#|#}=- * -={#|#}=- * -={#|#}=- * #
-# TODO : compléter le layout.
-
-
-app.layout = html.Div([
-    # Div Haute
-    html.Div(children=[  # TODO
-        html.Label("Barre des tâches ?"),
-    ], style={'display': 'flex', 'flexDirection': 'row'}),
-
-    # Div Basse
-    html.Div(children=[
-        # Div Gauche
-        html.Div(children=[
-            dcc.Graph(id='stock-graph'),
-            whole_selector,
-
-        ], style={'padding': 10, 'flex': 1}),
-
-        # Div Droite
-        html.Div(children=[
-            html.Label("Infos sur le(s) stock(s) sélectionné(s)"),
-            stock_info_table,
-        ], style={'padding': 10, 'flex': 1}),
-    ], style={'display': 'flex', 'flexDirection': 'row', 'padding': '5% 0'}),
-])
-
-
-# * -={#|#}=- * -={#|#}=- * -={#|#}=- * CALLBACKS * -={#|#}=- * -={#|#}=- * -={#|#}=- * #
-# TODO : ajouter un callback pour chaque action utilisateur.
-
-
-@callback(
-    Output('stock-graph', 'figure'),
-    Output('stock-table', 'data'),
-    Input('visualization-type', 'value'),
-)
-def update_graph(selected_stocks, visualization_type, bollinger_switch_value):
-    traces = []
-    data = []
-
-    for current_stock in selected_stocks:
-        if visualization_type == 'lines':
-            traces.append(go.Scatter(x=stock_data['Date'],
-                                     y=stock_data[current_stock],
-                                     mode='lines',
-                                     name=current_stock))
-
-    layout = go.Layout(title='Stock Prices', xaxis=dict(title='Date'), yaxis=dict(title='Price'))
-
-    grouped_data = stock_data.groupby(pd.Grouper(key='Date', freq='d'))
-    for date, group_data in grouped_data:
-        row_data = {
-            'date-column': date,
-            'min-column': round(group_data[selected_stocks].min().min(), 2),
-            'max-column': round(group_data[selected_stocks].max().max(), 2),
-            'start-column': round(group_data[selected_stocks].iloc[0, :].min(), 2),
-            'end-column': round(group_data[selected_stocks].iloc[-1, :].max(), 2),
-            'mean-column': round(group_data[selected_stocks].mean().mean(), 2),
-            'std-dev-column': round(group_data[selected_stocks].std().mean(), 2)
-        }
-        data.append(row_data)
-
-        # Create the figure for the graph
-    fig = {'data': traces, 'layout': layout}
-
-    return fig, data
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
-"""

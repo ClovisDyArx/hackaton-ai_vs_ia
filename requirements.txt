@@ -1,5 +1,5 @@
 tiktoken
 spacy
 dash
-
+wordcloud
 optuna
