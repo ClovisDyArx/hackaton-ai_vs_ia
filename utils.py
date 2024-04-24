@@ -3,9 +3,8 @@ import pandas as pd
 import s3fs
 import zipfile
 
-
+# Récupérer le jeu de données HC3
 def get_dataframe():
-    # Create filesystem object
     S3_ENDPOINT_URL = "https://" + os.environ["AWS_S3_ENDPOINT"]
     fs = s3fs.S3FileSystem(client_kwargs={'endpoint_url': S3_ENDPOINT_URL})
 
@@ -15,7 +14,7 @@ def get_dataframe():
     with zipfile.ZipFile("data/HC3.zip", "r") as zip_file:
         zip_file.extractall("data/")
 
-    # Concatenate subsets
+    # Concaténation des sous-ensembles
     df = pd.DataFrame()
     for file in ['finance', 'open_qa', 'medicine', 'wiki_csai']:
         subset = pd.read_json("data/HC3/" + file + ".jsonl", lines=True)
@@ -24,9 +23,8 @@ def get_dataframe():
     df.reset_index(drop=True)
     return df
 
-
+# Récupérer le nouveau jeu de données
 def get_new_dataframe():
-    # Create filesystem object
     S3_ENDPOINT_URL = "https://" + os.environ["AWS_S3_ENDPOINT"]
     fs = s3fs.S3FileSystem(client_kwargs={'endpoint_url': S3_ENDPOINT_URL})
 
@@ -34,6 +32,6 @@ def get_new_dataframe():
     PATH_IN = "civel/diffusion/hackathon-minarm-2024/AIVSAI/hack_train.csv"
     fs.download(PATH_IN, "data/hack_train.csv")
 
-    # Concatenate subsets
+    # Concaténation des sous-ensembles
     df = pd.read_csv("data/hack_train.csv")
     return df
