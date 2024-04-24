@@ -23,3 +23,17 @@ def get_dataframe():
 
     df.reset_index(drop=True)
     return df
+
+
+def get_new_dataframe():
+    # Create filesystem object
+    S3_ENDPOINT_URL = "https://" + os.environ["AWS_S3_ENDPOINT"]
+    fs = s3fs.S3FileSystem(client_kwargs={'endpoint_url': S3_ENDPOINT_URL})
+
+    # Télécharger les données dans le service
+    PATH_IN = "civel/diffusion/hackathon-minarm-2024/AIVSAI/hack_train.csv"
+    fs.download(PATH_IN, "data/hack_train.csv")
+
+    # Concatenate subsets
+    df = pd.read_csv("data/hack_train.csv")
+    return df
