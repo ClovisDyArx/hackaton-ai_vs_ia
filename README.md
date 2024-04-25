@@ -19,19 +19,18 @@ pip install -r requirements.txt
 ### Tableau de bord d'analyse
 Si vous souhaitez accéder au tableau de bord d'analyse des jeux de données, il vous faudra:
 
-![configurations](images/configurations.png)
-![liens](images/liens.png)
-
 1. Pour l'environnement Onyxia:
 
 - Il faudra créer un service avec la configuration suivante:
+![configurations](images/configurations.png)
 
-Puis vous devrez entrer la commande suivante:
+- Puis vous devrez entrer la commande suivante:
 
 ```sh
 python dashboard.py
 ```
-
+- Enfin, vous devrez cliquer sur le second lien, où vous pourrez visualiser le tableau de bord
+![liens](images/liens.png)
 
 
 2. Sur votre environnement personnel:
@@ -42,7 +41,7 @@ Il suffira de rentrer la commande suivante:
 python dashboard.py
 ```
 
-Et de cliquer sur le l'URL donnée dans votre terminal.
+Et de cliquer sur le l'URL donnée dans votre terminal, où vous pourrez visualiser le tableau de bord
 
 ## Auteurs
 
