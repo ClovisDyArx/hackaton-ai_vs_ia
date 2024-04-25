@@ -19,8 +19,8 @@ pip install -r requirements.txt
 ### Tableau de bord d'analyse
 Si vous souhaitez accéder au tableau de bord d'analyse des jeux de données, il vous faudra:
 
-(images/configurations.png)
-(images/liens.png)
+![configurations](images/configurations.png)
+![liens](images/liens.png)
 
 1. Pour l'environnement Onyxia:
 
