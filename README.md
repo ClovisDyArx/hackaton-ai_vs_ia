@@ -60,9 +60,9 @@ Et de cliquer sur le l'URL donnée dans votre terminal.
 
 👤 **Léa Margery**
 
-- LinkedIn: [@LéaMargery](www.linkedin.com/in/léa-margery)
+- LinkedIn: [@LéaMargery](https://www.linkedin.com/in/léa-margery/)
 - Github: [@lea-margery](https://github.com/lea-margery)
 
 👤 **Alexandre Mouton-Bistondi**
 
-- LinkedIn: [@AlexandreMouton-Bistondi](www.linkedin.com/in/alexandre-mouton-bistondi-1099a927b)
+- LinkedIn: [@AlexandreMouton-Bistondi](https://www.linkedin.com/in/alexandre-mouton-bistondi-1099a927b)
