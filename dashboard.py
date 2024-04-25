@@ -116,10 +116,12 @@ app.layout = html.Div([
         ], style={'padding': 10, 'flex': 1}),
 
         html.Div(children=[
+            html.H5(children='Nuage de mots les plus courants (humains)'),
             word_cloud_human
         ], style={'padding': 10, 'flex': 1}),
 
         html.Div(children=[
+            html.H5(children='Nuage de mots les plus courants (IAs)'),
             word_cloud_ia
         ], style={'padding': 10, 'flex': 1}),
 

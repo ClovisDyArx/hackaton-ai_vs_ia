@@ -5,3 +5,4 @@ wordcloud
 optuna
 transformers
 pandas
+customtkinter
